@@ -13,6 +13,7 @@ Via Composer
 
 ``` bash
 $ composer require ytokarchukova/badge
+$ php artisan migrate
 $ php artisan vendor:publish --provider="YTokarchukova\Badge\BadgeServiceProvider"
 ```
 
