@@ -1,0 +1,47 @@
+{
+    "name": "ytokarchukova/badge",
+    "description": "Add Badge Functionality to Laravel",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Yulia Tokarchukova",
+            "email": "ytokarchukova@gmail.com",
+            "homepage": "https://github.com/ytokarchukova"
+        }
+    ],
+    "homepage": "https://github.com/ytokarchukova/badge",
+    "keywords": ["Laravel", "Badge"],
+    "require": {
+        "illuminate/support": "~5|~6",
+        "symfony/dom-crawler": "^5.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0",
+        "mockery/mockery": "^1.1",
+        "orchestra/testbench": "~3|~4",
+        "sempro/phpunit-pretty-print": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "YTokarchukova\\Badge\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "YTokarchukova\\Badge\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "YTokarchukova\\Badge\\BadgeServiceProvider"
+            ],
+            "aliases": {
+                "BadgeFacade": "YTokarchukova\\Badge\\Facades\\Badge",
+                "Badge": "YTokarchukova\\Badge\\Models\\Badge",
+                "BadgeStorage": "YTokarchukova\\Badge\\Models\\BadgeStorage",
+                "Domain": "YTokarchukova\\Badge\\Models\\Domain"
+            }
+        }
+    }
+}
