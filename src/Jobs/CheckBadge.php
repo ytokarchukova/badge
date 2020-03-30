@@ -2,6 +2,7 @@
 
 namespace YTokarchukova\Badge\Jobs;
 
+use Exception;
 use YTokarchukova\Badge\Models\Badge;
 use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
@@ -17,16 +18,25 @@ class CheckBadge implements ShouldQueue
 
     public $tries = 2;
     public $retryAfter = 120;
+
     protected $badge;
+    protected $check_address;
 
     /**
      * Create a new job instance.
      *
      * @param Badge $badge
+     * @param $check_address
+     * @param int $retryAfter
+     * @param int $tries
      */
-    public function __construct(Badge $badge) {
+    public function __construct(Badge $badge, $check_address, $retryAfter = 120, $tries = 2) {
 
         $this->badge = $badge;
+        $this->check_address = $check_address;
+
+        $this->retryAfter = $retryAfter;
+        $this->tries = $tries;
 
     }
 
@@ -34,7 +44,7 @@ class CheckBadge implements ShouldQueue
      * Execute the job.
      *
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle() {
 
@@ -45,10 +55,10 @@ class CheckBadge implements ShouldQueue
 
         $client = new Client();
 
-        $response = $client->request('GET', 'http://' . $this->badge->domain->address, $client_args);
+        $response = $client->request('GET', 'https://' . $this->check_address, $client_args);
 
         if ($response->getStatusCode() !== 200) {
-            $this->fail(new \Exception('Getting Site Error'));
+            throw new Exception('Get Site Error');
         }
 
         $html_content = $response->getBody()->getContents();
@@ -60,7 +70,7 @@ class CheckBadge implements ShouldQueue
         $badge_nodes = $crawler->filter('#' . config('badge.prefix') . '-badge');
 
         if ($badge_nodes->count() === 0) {
-            $this->fail(new \Exception('Badge Not Found on Page'));
+            throw new Exception('Badge Not Found on Page');
         }
 
         $this->badge->status = true;
