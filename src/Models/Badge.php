@@ -9,33 +9,31 @@ use Illuminate\Support\Str;
 class Badge extends Model
 {
 
-    protected $fillable = ['domain_id', 'secret', 'badge_storage_id'];
-
-    public function domain() {
-        return $this->belongsTo(Domain::class);
-    }
+    protected $fillable = ['secret', 'badge_storage_id'];
 
     public function image() {
         return $this->belongsTo(BadgeStorage::class, 'badge_storage_id');
     }
 
-    public static function getForUser() {
-
-        return Badge::select('badges.id', 'badges.domain_id', 'badges.badge_storage_id', 'badges.status', 'badges.updated_at', 'domains.address AS domain_address')
-            ->leftJoin('domains', 'badges.domain_id', '=', 'domains.id')
-            ->where('domains.user_id', auth()->user()->id)
-            ->get();
-
-    }
-
-    public static function generate($domain_id) {
+    public static function generate() {
 
         $badge = Badge::create([
-            'domain_id' => $domain_id,
             'secret' => Str::random(),
         ]);
 
         Badge::generateJsFile($badge);
+
+    }
+
+    public static function regenerateAll() {
+
+        $badges = Badge::all();
+
+        foreach ($badges as $badge) {
+
+            Badge::generateJsFile($badge);
+
+        }
 
     }
 
